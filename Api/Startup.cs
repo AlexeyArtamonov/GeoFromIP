@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApplication1
+namespace Api
 {
     public class Startup
     {
@@ -20,8 +19,6 @@ namespace WebApplication1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string con = "Server=(localdb)\\mssqllocaldb;Database=GeoFromIP;Trusted_Connection=True;";
-            services.AddDbContext<Models.GeoDataContext>(options => options.UseSqlServer(con));
             services.AddControllers();
         }
 
