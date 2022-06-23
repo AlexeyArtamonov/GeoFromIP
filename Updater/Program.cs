@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Net;
 using HtmlAgilityPack;
-using System.Xml.Linq;
 
 namespace Updater
 {
@@ -30,26 +28,35 @@ namespace Updater
             if (downloadLink == null)
                 return;
 
-            WebClient Client = new WebClient();
-            Client.DownloadFile(downloadLink, path + "mmdb.gz");
+            using (WebClient Client = new WebClient())
+                Client.DownloadFile(downloadLink, path + "mmdb.gz");
 
-            using (FileStream fInStream = new FileStream(path + "mmdb.gz", FileMode.Open, FileAccess.Read))
+            try
             {
-                using (GZipStream zipStream = new GZipStream(fInStream, CompressionMode.Decompress))
+                Decompress(path);
+            }
+            finally
+            {
+                if (File.Exists(path + "mmdb.gz"))
+                    File.Delete(path + "mmdb.gz");
+            }
+        }
+        public static void Decompress(string path)
+        {
+            using (FileStream FInStream = new FileStream(path + "mmdb.gz", FileMode.Open, FileAccess.Read))
+            {
+                using GZipStream zipStream = new GZipStream(FInStream, CompressionMode.Decompress);
+                using FileStream FOutStream = new FileStream(path + "ipdb.mmdb", FileMode.Create, FileAccess.Write);
+
+                byte[] temp = new byte[4096];
+                int i;
+
+                while ((i = zipStream.Read(temp, 0, temp.Length)) != 0)
                 {
-                    using (FileStream fOutStream = new FileStream(path + "ipdb.mmdb", FileMode.Create, FileAccess.Write))
-                    {
-                        byte[] tempBytes = new byte[4096];
-                        int i;
-                        while ((i = zipStream.Read(tempBytes, 0, tempBytes.Length)) != 0)
-                        {
-                            fOutStream.Write(tempBytes, 0, i);
-                        }
-                    }
+                    FOutStream.Write(temp, 0, i);
                 }
             }
-
-            File.Delete(path + "mmdb.gz");
         }
     }
 }
+
