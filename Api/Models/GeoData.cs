@@ -29,9 +29,11 @@ namespace Api.Models
         {
             Latitude    = geoData.Latitude;
             Longitude   = geoData.Longitude;
-            Continent   = geoData.Continent.GetValueOrDefault(Language);
-            Country     = geoData.Country.GetValueOrDefault(Language);
-            City        = geoData.City.GetValueOrDefault(Language);
+            Continent   = geoData.Continent.GetValueOrDefault(Language, geoData.Continent.GetValueOrDefault("en"));
+            Country     = geoData.Country.GetValueOrDefault(Language,   geoData.Continent.GetValueOrDefault("en"));
+            City        = geoData.City.GetValueOrDefault(Language,      geoData.Continent.GetValueOrDefault("en"));
+
+            this.Language = Language;
         }
         public string Language  { get; set; }
         public string Continent { get; set; }
